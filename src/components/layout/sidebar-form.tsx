@@ -10,24 +10,31 @@ import {
 import { Button } from "../ui/button";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { ReactNode } from "react";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Trash2 } from "lucide-react";
 
 type SidebarFormProps = {
     title: string;
     children: ReactNode;
     onSave: () => void;
+    onDelete: () => void;
+    loading: boolean;
 }
 
 export function SidebarForm({
     title,
     children,
-    onSave
+    onSave,
+    onDelete,
+    loading
+
 }: SidebarFormProps) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    function handleCloseForm(open:boolean) {
+    function handleCloseForm(open: boolean) {
 
-        if(!open) {
+        if (!open) {
             const currentPath = location.pathname;
             const newPath = currentPath.substring(0, currentPath.lastIndexOf('/'))
             navigate(newPath);
@@ -45,22 +52,47 @@ export function SidebarForm({
                     </SheetDescription>
                 </SheetHeader>
 
-                {children}
 
-                <SheetFooter>
+                <div className="px-8">
+                    {children}
+                </div>
+
+                <SheetFooter className="flex flex-">
                     <div className="flex flex-row gap-1">
 
-                        <Button>
-                            onClick=(onSave)
+                        <Button
+                            onClick={onSave}
+                            disabled={loading}
+                        >
+                            Salvar
                         </Button>
 
                         <SheetClose asChild>
-                            <Button variant='outline'>
-                                Cancelar 
+                            <Button
+                                variant='outline'
+                                disabled={loading}
+                            >
+                                Cancelar
                             </Button>
                         </SheetClose>
 
                     </div>
+                    {onDelete && (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant='destructive'
+                                    size='icon'
+                                    onClick={onDelete}
+                                >
+                                    <Trash2 />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Remover Registro</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    )}
                 </SheetFooter>
 
             </SheetContent>
